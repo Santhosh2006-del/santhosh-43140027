@@ -1,0 +1,131 @@
+html:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Waste Segregation Assistant</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Smart Waste Segregation Assistant</h1>
+
+  <label>Enter Waste Item:</label>
+  <input type="text" id="inputItem" placeholder="e.g., tube light">
+  <button onclick="searchItem()">Search</button>
+
+  <div id="output"></div>
+
+  <div class="add-section">
+    <h3>Add New Item</h3>
+    <input type="text" id="newItemName" placeholder="Item Name">
+    <input type="text" id="newItemCategory" placeholder="Category (Biodegradable/Recyclable/Hazardous)">
+    <input type="text" id="newItemMethod" placeholder="Disposal Method">
+    <button onclick="addItem()">Add Item</button>
+  </div>
+
+  style css
+  /* Background and font */
+body {
+  background-color: #e6f7ff; /* Light blue */
+  font-family: Arial, sans-serif;
+  color: #003366;
+  margin: 20px;
+}
+
+/* Main heading */
+h1 {
+  color: #004d99;
+  text-align: center;
+}
+
+/* Labels and output */
+label {
+  font-weight: bold;
+}
+
+#output {
+  background-color: #ffffff;
+  border: 2px solid #004d99;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  color: #000000;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Input and button styling */
+input, button {
+  border-radius: 5px;
+  padding: 6px;
+  border: 1px solid #004d99;
+  font-size: 14px;
+}
+
+button {
+  background-color: #004d99;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #0066cc;
+}
+
+/* Add new item box */
+.add-section {
+  background-color: #f2f9ff;
+  padding: 15px;
+  border: 2px solid #004d99;
+  border-radius: 10px;
+  margin-top: 20px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.add-section h3 {
+  color: #004d99;
+}
+
+javascript 
+const items = [
+  { name: "tube light", category: "hazardous", method: "dispose at collection center" },
+  { name: "banana peel", category: "biodegradable", method: "use for compost" },
+  { name: "plastic bottle", category: "recyclable", method: "recycle" }
+];
+
+function searchItem() {
+  const input = document.getElementById("inputItem").value.trim().toLowerCase();
+  const output = document.getElementById("output");
+  const found = items.find(i => i.name.toLowerCase() === input);
+
+  if (found) {
+    output.innerHTML = `<b>Item:</b> ${found.name}<br><b>Category:</b> ${found.category}<br><b>Disposal Method:</b> ${found.method}`;
+  } else {
+    output.innerHTML = "Item not found. You can add it below.";
+  }
+}
+
+function addItem() {
+  const name = document.getElementById("newItemName").value.trim();
+  const category = document.getElementById("newItemCategory").value.trim();
+  const method = document.getElementById("newItemMethod").value.trim();
+  const output = document.getElementById("output");
+
+  if (!name || !category || !method) {
+    output.innerHTML = "⚠️ Please fill all fields before adding an item.";
+    return;
+  }
+
+  items.push({ name, category, method });
+  output.innerHTML = `✅ Item added successfully: ${name} (${category}) - ${method}`;
+  document.getElementById("newItemName").value = "";
+  document.getElementById("newItemCategory").value = "";
+  document.getElementById("newItemMethod").value = "";
+}
