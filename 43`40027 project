@@ -1,4 +1,7 @@
+SMART WASTE SEGREGATION ASSISTANT
+
 html:
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +28,9 @@ html:
     <button onclick="addItem()">Add Item</button>
   </div>
 
-  style css
+
+  style css:
+
   /* Background and font */
 body {
   background-color: #e6f7ff; /* Light blue */
@@ -93,7 +98,8 @@ button:hover {
   color: #004d99;
 }
 
-javascript 
+javascript :
+
 const items = [
   { name: "tube light", category: "hazardous", method: "dispose at collection center" },
   { name: "banana peel", category: "biodegradable", method: "use for compost" },
