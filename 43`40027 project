@@ -1,6 +1,6 @@
 SMART WASTE SEGREGATION ASSISTANT
 
-html:
+html:(frontend)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -135,3 +135,114 @@ function addItem() {
   document.getElementById("newItemCategory").value = "";
   document.getElementById("newItemMethod").value = "";
 }
+
+data.json :
+
+[
+  { "name": "tube light", "category": "hazardous", "method": "dispose at collection center" },
+  { "name": "banana peel", "category": "biodegradable", "method": "use for compost" },
+  { "name": "plastic bottle", "category": "recyclable", "method": "recycle" }
+]
+
+server.js (backend ):
+
+
+const express = require("express");
+const fs = require("fs");
+const cors = require("cors");
+
+const app = express();
+const PORT = 3000;
+
+app.use(cors());
+app.use(express.json());
+
+// Read data from JSON file
+function readData() {
+  const data = fs.readFileSync("data.json", "utf8");
+  return JSON.parse(data);
+}
+
+// Write data to JSON file
+function writeData(data) {
+  fs.writeFileSync("data.json", JSON.stringify(data, null, 2));
+}
+
+// GET all items
+app.get("/items", (req, res) => {
+  res.json(readData());
+});
+
+// Search for an item
+app.get("/items/:name", (req, res) => {
+  const items = readData();
+  const item = items.find(i => i.name.toLowerCase() === req.params.name.toLowerCase());
+  if (item) res.json(item);
+  else res.status(404).json({ message: "Item not found" });
+});
+
+// Add a new item
+app.post("/items", (req, res) => {
+  const items = readData();
+  const newItem = req.body;
+  items.push(newItem);
+  writeData(items);
+  res.json({ message: "Item added successfully", item: newItem });
+});
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
+script.js(connect frontend to backend)
+
+const API_URL = "http://localhost:3000/items";
+
+async function searchItem() {
+  const input = document.getElementById("inputItem").value.trim().toLowerCase();
+  const output = document.getElementById("output");
+
+  if (!input) {
+    output.innerHTML = "⚠️ Please enter an item name.";
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/${input}`);
+    if (response.ok) {
+      const data = await response.json();
+      output.innerHTML = `<b>Item:</b> ${data.name}<br><b>Category:</b> ${data.category}<br><b>Disposal Method:</b> ${data.method}`;
+    } else {
+      output.innerHTML = "Item not found. You can add it below.";
+    }
+  } catch (err) {
+    output.innerHTML = "⚠️ Backend server not running!";
+  }
+}
+
+async function addItem() {
+  const name = document.getElementById("newItemName").value.trim();
+  const category = document.getElementById("newItemCategory").value.trim();
+  const method = document.getElementById("newItemMethod").value.trim();
+  const output = document.getElementById("output");
+
+  if (!name || !category || !method) {
+    output.innerHTML = "⚠️ Please fill all fields before adding an item.";
+    return;
+  }
+
+  const newItem = { name, category, method };
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newItem)
+    });
+    const result = await response.json();
+    output.innerHTML = `✅ ${result.message}: ${result.item.name} (${result.item.category})`;
+  } catch (err) {
+    output.innerHTML = "⚠️ Unable to connect to backend.";
+  }
+}
+
+
+
